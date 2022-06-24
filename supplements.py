@@ -2,10 +2,8 @@ from psychopy import monitors, visual
 
 
 def config_mon_imac24():
-    width = 2240
-    height = 1260
     monitor = monitors.Monitor('prim_mon', width=54.7, distance=57)
-    monitor.setSizePix([height, width])
+    monitor.setSizePix([1260, 2240])
     return monitor
 
 
@@ -14,7 +12,7 @@ def config_win(mon):
                         units='deg',
                         fullscr=True,
                         color=[-.8, -.8, -.8])
-    # win.mouseVisible = False
+    win.mouseVisible = False
     return win
 
 
@@ -23,7 +21,6 @@ def draw_frame(win, width, pos=(0, 0)):
                               size=width,
                               fillColor='white',
                               pos=pos)
-
     inner_frame = visual.Rect(win=win,
                               size=width - .5,
                               fillColor=[-.8, -.8, -.8],

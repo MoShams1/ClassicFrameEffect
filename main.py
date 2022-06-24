@@ -1,9 +1,15 @@
+# *********************************************************************************************
+#
 # This is the main script of a project that creates a basic frame effect (Özkan et al. 2022)
+# All functions defined for this project are stored in supplements.py and need to be imported.
+#
 # Mohammad Shams
 # m.shams.ahmar@gmail.com
-# 2022-05-23
+# modified on: 2022-05-23
+#
+# *********************************************************************************************
 
-from psychopy import visual, event, core, monitors
+from psychopy import event, core
 import supplements as sup
 import numpy as np
 
@@ -20,35 +26,51 @@ ref_rate = 60
 min_obj_dur = 2  # frame
 # frame
 frame_width = 15  # deg
-frame_path_len = 9  # deg
+frame_path_len = 12  # deg
 frame_path_dur = 30  # frame
-frame_jump = (frame_path_len + 1) / (frame_path_dur / min_obj_dur)  # deg
-frame_x = -4 - frame_jump
-frame_y = 0
+# probe
+probe_y_offset = 2  # deg
 
-num_jumps = int(frame_path_dur / min_obj_dur)  # how often the frame should jump
+# -------------------------------------------------
+# create the frame path
+# -------------------------------------------------
+frames_per_stroke = int(frame_path_dur / min_obj_dur)  # number of frames per stroke
+frame_x_arr = np.linspace(0, frame_path_len, frames_per_stroke)  # deg
+frame_y = 0  # deg
+mid_way = frame_x_arr[int((frames_per_stroke - 1) / 2)]  # find the midway of the current path
+frame_x_arr = frame_x_arr - mid_way  # align the path to the center (hirizontally) by removing the offset (the midway)
 
 # -------------------------------------------------
 # run the stimulus
 # -------------------------------------------------
+#
+while True:
 
-# 1st leg of the cycle
-for icycle in range(1):
-    for ichange in range(num_jumps):
-        frame_x = np.around(frame_x + frame_jump, 1)  # update the frame position
+    # --------------------
+    # 1st leg of the cycle
+    # --------------------
+    stroke1 = frame_x_arr[1:]
+
+    for xind, xval in enumerate(stroke1):
         for irep in range(min_obj_dur):
-            sup.draw_frame(win, pos=(frame_x, frame_y), width=frame_width)
-            if ichange == num_jumps - 1:  # draw the probe if the frame is at the end of its path
-                sup.draw_probe(win, color='red', pos=(0, frame_y+(frame_width/2-2)))
+            sup.draw_frame(win, pos=(xval, frame_y), width=frame_width)
+            if xind == len(stroke1) - 1:  # draw the probe if the frame is at the end of its path
+                sup.draw_probe(win, color='orangered', pos=(0, frame_y + (frame_width / 2 - 2)))
             win.flip()
 
-# 2nd leg of the cycle
-    for ichange in range(num_jumps):
-        frame_x = np.around(frame_x - frame_jump, 1)
+    # --------------------
+    # 2nd leg of the cycle
+    # --------------------
+    stroke2 = frame_x_arr[0:-1][::-1]
+
+    for xind, xval in enumerate(stroke2):
         for irep in range(min_obj_dur):
-            sup.draw_frame(win, pos=(frame_x, frame_y), width=frame_width)
-            if ichange == num_jumps - 1:  # draw the probe if the frame is at the end of its path
-                sup.draw_probe(win, color='DeepSkyBlue', pos=(0, frame_y-(frame_width/2-2)))
+            sup.draw_frame(win, pos=(xval, frame_y), width=frame_width)
+            if xind == len(stroke2) - 1:  # draw the probe if the frame is at the end of its path
+                sup.draw_probe(win, color='dodgerblue', pos=(0, frame_y - (frame_width / 2 - 2)))
             win.flip()
 
-win.close()
+    # exit the session if 'escape' was pressed
+    exit_key = event.getKeys(keyList=['escape'])
+    if 'escape' in exit_key:
+        core.quit()
