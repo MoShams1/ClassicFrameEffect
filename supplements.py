@@ -1,16 +1,6 @@
 from psychopy import monitors, visual
 
 
-class Probe:
-    def __init__(self, diameter, color, duration):
-        self.diameter = diameter
-        self.color = color
-        self.duration = duration
-
-    def appear(self):
-        pass
-
-
 def config_mon_imac24():
     width = 2240
     height = 1260
@@ -22,20 +12,26 @@ def config_mon_imac24():
 def config_win(mon):
     win = visual.Window(monitor=mon,
                         units='deg',
-                        size=[1000, 700],
+                        fullscr=True,
                         color=[-.8, -.8, -.8])
+    # win.mouseVisible = False
     return win
 
 
-def draw_frame(win, pos=(0, 0)):
+def draw_frame(win, width, pos=(0, 0)):
     outer_frame = visual.Rect(win=win,
-                              size=10,
+                              size=width,
                               fillColor='white',
                               pos=pos)
 
     inner_frame = visual.Rect(win=win,
-                              size=9.5,
+                              size=width - .5,
                               fillColor=[-.8, -.8, -.8],
                               pos=pos)
     outer_frame.draw()
     inner_frame.draw()
+
+
+def draw_probe(win, color, radius=1, pos=(0, 0)):
+    probe = visual.Circle(win, radius=radius, fillColor=color, pos=pos)
+    probe.draw()
